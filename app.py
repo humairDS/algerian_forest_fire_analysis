@@ -66,24 +66,27 @@ if app_mode == "🔥 Fire Risk Predictor":
         with col1:
             temperature = st.number_input("Temperature (°C)", min_value=20.0, max_value=50.0, value=30.0)
             rh = st.number_input("Relative Humidity (%)", min_value=10.0, max_value=100.0, value=50.0)
+            ws = st.number_input("Wind Speed (km/h)", min_value=0.0, max_value=30.0, value=15.0)
             
         with col2:
-            ws = st.number_input("Wind Speed (km/h)", min_value=0.0, max_value=30.0, value=15.0)
             rain = st.number_input("Rainfall (mm)", min_value=0.0, max_value=20.0, value=0.0)
-            
-        with col3:
             ffmc = st.number_input("FFMC Index", min_value=10.0, max_value=100.0, value=85.0)
             dmc = st.number_input("DMC Index", min_value=1.0, max_value=200.0, value=25.0)
+            
+        with col3:
             dc = st.number_input("DC Index", min_value=5.0, max_value=900.0, value=40.0)
             isi = st.number_input("ISI Index", min_value=0.0, max_value=60.0, value=6.0)
+            bui = st.number_input("BUI Index", min_value=0.0, max_value=300.0, value=15.0) # Feature 9
+            region = st.selectbox("Region (0: Bejaia, 1: Sidi Bel-abbes)", [0, 1]) # Feature 10
 
         submit_button = st.form_submit_button(label="Predict Fire Risk")
 
     if submit_button:
         if model is None or scaler is None:
-            st.error("Model or Scaler files not found! Please make sure model.pkl and scaler.pkl are placed in the 'model/' directory.")
+            st.error("Model or Scaler files not found!")
         else:
-            input_data = np.array([[temperature, rh, ws, rain, ffmc, dmc, dc, isi]])
+            # Pass all 10 features matching your training array shape
+            input_data = np.array([[temperature, rh, ws, rain, ffmc, dmc, dc, isi, bui, region]])
             scaled_data = scaler.transform(input_data)
             prediction = model.predict(scaled_data)
             
